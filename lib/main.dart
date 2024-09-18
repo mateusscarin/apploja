@@ -1,20 +1,15 @@
+import 'package:apploja/router.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'package:firebase_core/firebase_core.dart';
-
-import 'package:apploja/router.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  /* await Firebase.initializeApp(
-      options: const FirebaseOptions(
-          apiKey: "AIzaSyDTKuK_9HWTlZTTQAUhHGByqq6VfsN0SnQ",
-          authDomain: "bd-firestore-dd770.firebaseapp.com",
-          projectId: "bd-firestore-dd770",
-          storageBucket: "bd-firestore-dd770.appspot.com",
-          messagingSenderId: "866694630343",
-          appId: "1:866694630343:web:f73535a57f936afe06e7e2")); */
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   //await dotenv.load(fileName: "assets/.env");
   runApp(const MyApp());

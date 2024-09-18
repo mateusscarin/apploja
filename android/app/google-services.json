@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "214664073123",
+    "project_id": "dbapp-flutter",
+    "storage_bucket": "dbapp-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214664073123:android:c2689e6f0b911538839416",
+        "android_client_info": {
+          "package_name": "com.magazineluiz.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSKwE56q0bpzXBn4QRNfqvxB5B0XwEmwQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

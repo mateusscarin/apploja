@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class User {
+class UserModel {
   final String name;
   final String cpf;
   final String phone;
   final String email;
   final String? id;
 
-  User(
+  UserModel(
       {required this.name,
       required this.cpf,
       required this.phone,
@@ -15,16 +15,15 @@ class User {
       this.id});
 
   //do Json para dados
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-        name: json['name'],
-        cpf: json['cpf'],
-        phone: json['phone'],
-        email: json['email'],
-        id: json['id']);
+  factory UserModel.fromDocument(DocumentSnapshot doc) {
+    return UserModel(
+      id: doc.id,
+      name: doc['name'],
+      cpf: doc['cpf'],
+      phone: doc['phone'],
+      email: doc['email'],
+    );
   }
-
-  //dados para Json
   toJson() {
     return {'name': name, 'cpf': cpf, 'phone': phone, 'email': email, 'id': id};
   }

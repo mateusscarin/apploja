@@ -1,8 +1,5 @@
+import 'package:apploja/pages/user.dart';
 import 'package:flutter/material.dart';
-
-import '../main.dart';
-
-import 'dart:developer';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: const Text("JC LOGIN")),
+      appBar: AppBar(centerTitle: true, title: const Text("LOGIN")),
       backgroundColor:
           Colors.grey[200], // Altere a cor de fundo conforme necessário
       body: Padding(
@@ -75,12 +72,12 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 15.0),
             InkWell(
               onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => const UserHomePage(),
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const UserHomePage(),
+                  ),
+                );
               },
               child: Container(
                 height: 50.0,
