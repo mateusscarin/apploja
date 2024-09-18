@@ -1,17 +1,22 @@
 # apploja
 
-A new Flutter project.
+Projeto para iniciar os aprendizados com Flutter. 
 
-## Getting Started
+## Preparando o Workspace
+### Configuração do Firebase e FlutterFire
+1. Instalar o Firebase CLI
+`npm install -g firebase-tools`
 
-This project is a starting point for a Flutter application.
+2. Verifique se o Firebase CLI está funcionando
+`firebase --version`
 
-A few resources to get you started if this is your first Flutter project:
+3. Digite o comando e logue com sua conta desejada
+`firebase login`
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+4. Configure o FlutterFire CLI:
+`flutterfire configure --project=nome-do-seu-app-firebase`
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# apploja
+5. Deverá informar as plataformas suportadas pela sua configuração (utilizando as teclas de setas e espaço para selecionar)
+
+6. Dê um ID de aplicação Android (ou nome de pacote) que pretenderá utilizar
+
