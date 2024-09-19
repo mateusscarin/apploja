@@ -1,7 +1,7 @@
-import 'package:apploja/main.dart';
 import 'package:apploja/model/usermodel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class UserHomePage extends StatefulWidget {
   const UserHomePage({super.key});
@@ -15,17 +15,19 @@ class _UserHomePageState extends State<UserHomePage> {
   final _cpfController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
-  final _searchController = TextEditingController();
 
   bool _editForm = false;
   String _editId = "";
 
-  // Função para criar ou atualizar usuário no Firebase
+  final _formKey = GlobalKey<FormState>();
+
+  // Máscaras
+  var cpfMask = MaskTextInputFormatter(mask: '###.###.###-##', filter: {"#": RegExp(r'[0-9]')});
+  var phoneMask = MaskTextInputFormatter(mask: '(##) #####-####', filter: {"#": RegExp(r'[0-9]')});
+
+  // Função para validar e salvar usuário
   Future<void> _saveUser() async {
-    if (_nameController.text.isNotEmpty &&
-        _cpfController.text.isNotEmpty &&
-        _phoneController.text.isNotEmpty &&
-        _emailController.text.isNotEmpty) {
+    if (_formKey.currentState!.validate()) {
       UserModel userModel = UserModel(
         name: _nameController.text,
         cpf: _cpfController.text,
@@ -59,8 +61,9 @@ class _UserHomePageState extends State<UserHomePage> {
           content:
               Text(_editForm ? 'Usuário atualizado!' : 'Usuário criado!')));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Por favor, preencha todos os campos.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, preencha os campos corretamente.')),
+      );
     }
   }
 
@@ -86,105 +89,127 @@ class _UserHomePageState extends State<UserHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        title: const Text('CRUD de Usuários'),
+        backgroundColor: const Color(0xFF4A90E2),
+        title: const Text('Gerenciamento de Usuários'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Cadastro de Usuário',
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20.0),
-            _buildTextField(_nameController, 'Nome', Icons.person),
-            const SizedBox(height: 10.0),
-            _buildTextField(_cpfController, 'CPF', Icons.credit_card),
-            const SizedBox(height: 10.0),
-            _buildTextField(_phoneController, 'Telefone', Icons.phone),
-            const SizedBox(height: 10.0),
-            _buildTextField(_emailController, 'Email', Icons.email),
-            const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: _saveUser,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: MyApp.primaryColor,
-                padding: const EdgeInsets.symmetric(vertical: 15.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Cadastro de Usuário',
+                style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold, color: Color(0xFF333333)),
+              ),
+              const SizedBox(height: 20.0),
+              _buildTextField(_nameController, 'Nome', Icons.person, false),
+              const SizedBox(height: 15.0),
+              _buildTextField(_cpfController, 'CPF', Icons.credit_card, true, maskFormatter: cpfMask),
+              const SizedBox(height: 15.0),
+              _buildTextField(_phoneController, 'Telefone', Icons.phone, true, maskFormatter: phoneMask),
+              const SizedBox(height: 15.0),
+              _buildTextField(_emailController, 'Email', Icons.email, false, isEmail: true),
+              const SizedBox(height: 25.0),
+              ElevatedButton(
+                onPressed: _saveUser,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 0, 192, 150),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  _editForm ? 'Atualizar Usuário' : 'Cadastrar Usuário',
+                  style: const TextStyle(fontSize: 18.0, color: Colors.white),
                 ),
               ),
-              child:
-                  Text(_editForm ? 'Atualizar Usuário' : 'Cadastrar Usuário'),
-            ),
-            const SizedBox(height: 20.0),
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream:
-                    FirebaseFirestore.instance.collection('users').snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+              const SizedBox(height: 20.0),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance.collection('users').snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                  if (!snapshot.hasData) {
-                    return const Text('Nenhum usuário encontrado.');
-                  }
+                    if (!snapshot.hasData) {
+                      return const Text('Nenhum usuário encontrado.');
+                    }
 
-                  return ListView(
-                    children: snapshot.data!.docs.map((doc) {
-                      UserModel userModel = UserModel.fromDocument(doc);
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 10.0),
-                        child: ListTile(
-                          title: Text(userModel.name),
-                          subtitle: Text(
-                              'Email: ${userModel.email} - Telefone: ${userModel.phone}'),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () => _editUser(userModel),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () => _deleteUser(userModel.id!),
-                              ),
-                            ],
+                    return ListView(
+                      children: snapshot.data!.docs.map((doc) {
+                        UserModel userModel = UserModel.fromDocument(doc);
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 10.0),
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  );
-                },
+                          child: ListTile(
+                            title: Text(userModel.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: Text(
+                                'Email: ${userModel.email}\nTelefone: ${userModel.phone}',
+                                style: const TextStyle(color: Colors.grey)),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit, color: Color(0xFF4A90E2)),
+                                  onPressed: () => _editUser(userModel),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () => _deleteUser(userModel.id!),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   // Widget para simplificar os campos de texto
-  Widget _buildTextField(
-      TextEditingController controller, String labelText, IconData icon) {
+  Widget _buildTextField(TextEditingController controller, String labelText, IconData icon, bool isNumeric, {MaskTextInputFormatter? maskFormatter, bool isEmail = false}) {
     return Container(
       decoration: BoxDecoration(
+        color: Colors.white,
         border: Border.all(color: Colors.grey.shade300, width: 1.0),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
+        keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
+        inputFormatters: maskFormatter != null ? [maskFormatter] : [],
         decoration: InputDecoration(
-          prefixIcon: Icon(icon),
+          prefixIcon: Icon(icon, color: const Color(0xFF4A90E2)),
           labelText: labelText,
+          labelStyle: const TextStyle(color: Color(0xFF333333)),
           border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Campo obrigatório';
+          }
+          if (isEmail && !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+            return 'E-mail inválido';
+          }
+          return null;
+        },
       ),
     );
   }

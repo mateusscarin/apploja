@@ -1,11 +1,9 @@
-import 'package:apploja/model/usermodel.dart';
-import 'package:flutter/material.dart';
 import 'package:apploja/pages/login.dart';
-import 'package:apploja/pages/user.dart';
+import 'package:flutter/material.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    final args = settings.arguments;
+    //final args = settings.arguments;
 
     switch (settings.name) {
       case '/':
