@@ -2,14 +2,14 @@
   "project_info": {
     "project_number": "214664073123",
     "project_id": "dbapp-flutter",
-    "storage_bucket": "dbapp-flutter.appspot.com"
+    "storage_bucket": "dbapp-flutter.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:214664073123:android:c2689e6f0b911538839416",
+        "mobilesdk_app_id": "1:214664073123:android:6124b7ae1cce1448839416",
         "android_client_info": {
-          "package_name": "com.magazineluiz.app"
+          "package_name": "com.example.apploja"
         }
       },
       "oauth_client": [],
